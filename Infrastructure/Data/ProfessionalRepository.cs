@@ -28,9 +28,13 @@ namespace Infrastructure.Data
 
         public async Task AddAsync(Professional professional)
         {
-            const string sql = @"INSERT INTO Professionals (Id, Name) VALUES (@Id, @Name)";
+            const string sql = @"
+            INSERT INTO Professionals (Id, FullName, Specialty, CRM)
+            VALUES (@Id, @FullName, @Specialty, @CRM)";
+
             await _connection.ExecuteAsync(sql, professional);
         }
+
 
         public async Task<bool> ExistsAsync(Guid professionalId)
         {
