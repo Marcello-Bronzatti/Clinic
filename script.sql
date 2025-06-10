@@ -1,28 +1,36 @@
--- Criação da tabela de Pacientes
+-- Pacientes
 CREATE TABLE Patients (
-    Id TEXT PRIMARY KEY,
-    FullName TEXT NOT NULL,
-    CPF TEXT NOT NULL UNIQUE,
-    Email TEXT NOT NULL UNIQUE
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    FullName NVARCHAR(100) NOT NULL,
+    CPF NVARCHAR(20) NOT NULL UNIQUE,
+    Email NVARCHAR(100) NOT NULL UNIQUE
 );
 
--- Criação da tabela de Profissionais
+-- Profissionais
 CREATE TABLE Professionals (
-    Id TEXT PRIMARY KEY,
-    FullName TEXT NOT NULL,
-    Specialty TEXT NOT NULL,
-    CRM TEXT NOT NULL UNIQUE
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    FullName NVARCHAR(100) NOT NULL,
+    Specialty NVARCHAR(100) NOT NULL,
+    CRM NVARCHAR(50) NOT NULL UNIQUE
 );
 
--- Criação da tabela de Agendamentos
+-- Agendamentos
 CREATE TABLE Appointments (
-    Id TEXT PRIMARY KEY,
-    PatientId TEXT NOT NULL,
-    ProfessionalId TEXT NOT NULL,
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    PatientId UNIQUEIDENTIFIER NOT NULL,
+    ProfessionalId UNIQUEIDENTIFIER NOT NULL,
     ScheduledAt DATETIME NOT NULL,
     FOREIGN KEY (PatientId) REFERENCES Patients(Id),
     FOREIGN KEY (ProfessionalId) REFERENCES Professionals(Id)
 );
 
+-- Usuários
+CREATE TABLE Users (
+    Id UNIQUEIDENTIFIER PRIMARY KEY,
+    Username NVARCHAR(100) NOT NULL UNIQUE,
+    Password NVARCHAR(200) NOT NULL
+);
+
+-- Índices
 CREATE INDEX idx_appointments_patient ON Appointments(PatientId, ProfessionalId, ScheduledAt);
 CREATE INDEX idx_appointments_professional ON Appointments(ProfessionalId, ScheduledAt);
