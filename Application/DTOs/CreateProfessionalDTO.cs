@@ -6,5 +6,4 @@
         public string Specialty { get; set; }
         public string CRM { get; set; }  
     }
-
 }

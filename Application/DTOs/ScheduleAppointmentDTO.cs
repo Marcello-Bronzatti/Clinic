@@ -4,6 +4,6 @@
     {
         public int PatientId { get; set; }
         public int ProfessionalId { get; set; }
-        public DateTime Date { get; set; } // Includes time
+        public DateTime Date { get; set; } 
     }
 }

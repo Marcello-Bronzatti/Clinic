@@ -39,6 +39,4 @@ namespace Infrastructure.Data
             return result.HasValue;
         }
     }
-
-
 }

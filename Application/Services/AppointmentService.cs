@@ -22,8 +22,11 @@ namespace Application.Services
 
         public async Task<bool> IsAvailableAsync(CreateAppointmentDTO dto)
         {
-            if (!IsBusinessHour(dto.ScheduledAt))
-                return false;
+            if (!await _professionalRepository.ExistsAsync(dto.ProfessionalId))
+                throw new ArgumentException("Profissional não encontrado.");
+
+            if (!await _patientRepository.ExistsAsync(dto.PatientId))
+                throw new ArgumentException("Paciente não encontrado.");
 
             var hasProfessionalConflict = await _appointmentRepository.HasConflictAsync(dto.ProfessionalId, dto.ScheduledAt);
             if (hasProfessionalConflict) return false;
@@ -34,14 +37,8 @@ namespace Application.Services
 
         public async Task ScheduleAsync(CreateAppointmentDTO dto)
         {
-            if (!await _patientRepository.ExistsAsync(dto.PatientId))
-                throw new InvalidOperationException("Paciente não encontrado.");
-
-            if (!await _professionalRepository.ExistsAsync(dto.ProfessionalId))
-                throw new InvalidOperationException("Profissional não encontrado.");
-
             if (!await IsAvailableAsync(dto))
-                throw new InvalidOperationException("O horário já está ocupado ou fora do expediente.");
+                throw new InvalidOperationException("O horário já está ocupado para este profissional ou paciente.");
 
             var appointment = new Appointment
             {
@@ -54,17 +51,9 @@ namespace Application.Services
             await _appointmentRepository.AddAsync(appointment);
         }
 
-        private bool IsBusinessHour(DateTime dateTime)
+        public async Task<IEnumerable<Appointment>> GetAppointmentsByProfessionalAsync(Guid professionalId, DateTime date)
         {
-            var day = dateTime.DayOfWeek;
-            var hour = dateTime.TimeOfDay;
-
-            return day != DayOfWeek.Saturday &&
-                   day != DayOfWeek.Sunday &&
-                   hour >= TimeSpan.FromHours(8) &&
-                   hour < TimeSpan.FromHours(18);
+            return await _appointmentRepository.GetByProfessionalIdAsync(professionalId, date);
         }
     }
-
-
 }
