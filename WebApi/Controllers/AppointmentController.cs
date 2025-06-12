@@ -18,6 +18,22 @@ namespace Clinic.API.Controllers
             _appointmentService = appointmentService;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<object>>> GetAllAsync()
+        {
+            var appointments = await _appointmentService.GetAllAsync();
+
+            var result = appointments.Select(a => new
+            {
+                a.Id,
+                a.ScheduledAt,
+                a.PatientName,
+                a.ProfessionalName
+            });
+
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Schedule([FromBody] CreateAppointmentDTO dto)
         {

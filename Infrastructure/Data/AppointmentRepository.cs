@@ -64,7 +64,9 @@ namespace Infrastructure.Data
             var sql = @"
             SELECT a.Id, a.ScheduledAt,
                    p.FullName AS PatientName,
-                   pr.FullName AS ProfessionalName
+                   p.Id,
+                   pr.FullName AS ProfessionalName,
+                   pr.id as ProfessionalId
             FROM Appointments a
             INNER JOIN Patients p ON p.Id = a.PatientId
             INNER JOIN Professionals pr ON pr.Id = a.ProfessionalId

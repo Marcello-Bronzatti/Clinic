@@ -8,5 +8,6 @@ namespace Domain.Interfaces
         Task<IEnumerable<Patient>> GetAllAsync();
         Task AddAsync(Patient patient);
         Task<bool> ExistsAsync(Guid patientId);
+        Task DeleteAsync(Guid id);
     }
 }

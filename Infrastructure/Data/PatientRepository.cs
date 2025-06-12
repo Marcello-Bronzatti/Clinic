@@ -28,7 +28,7 @@ namespace Infrastructure.Data
 
         public async Task AddAsync(Patient patient)
         {
-            const string sql = "INSERT INTO Patients (Id, Name) VALUES (@Id, @Name)";
+            const string sql = "INSERT INTO Patients (FullName, CPF, Email) VALUES (@FullName, @CPF, @Email)";
             await _connection.ExecuteAsync(sql, patient);
         }
 
@@ -37,6 +37,11 @@ namespace Infrastructure.Data
             const string sql = "SELECT 1 FROM Patients WHERE Id = @Id";
             var result = await _connection.ExecuteScalarAsync<int?>(sql, new { Id = patientId });
             return result.HasValue;
+        }
+        public async Task DeleteAsync(Guid id)
+        {
+            const string sql = "DELETE FROM Patients WHERE Id = @Id";
+            await _connection.ExecuteAsync(sql, new { Id = id });
         }
     }
 }

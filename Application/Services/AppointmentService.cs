@@ -4,7 +4,7 @@ using Domain.Interfaces;
 
 namespace Application.Services
 {
-    public class AppointmentService : IAppointmentRepository
+    public class AppointmentService 
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IPatientRepository _patientRepository;

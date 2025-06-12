@@ -10,21 +10,21 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class ProfessionalController : ControllerBase
     {
-        private readonly ProfessionalService _service;
+        private readonly ProfessionalService _professionalService;
 
         public ProfessionalController(ProfessionalService service)
         {
-            _service = service;
+            _professionalService = service;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll() =>
-            Ok(await _service.GetAllAsync());
+            Ok(await _professionalService.GetAllAsync());
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var professional = await _service.GetByIdAsync(id);
+            var professional = await _professionalService.GetByIdAsync(id);
             if (professional is null)
                 return NotFound();
 
@@ -34,7 +34,7 @@ namespace Presentation.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Professional professional)
         {
-            await _service.AddAsync(professional);
+            await _professionalService.AddAsync(professional);
             return CreatedAtAction(nameof(GetById), new { id = professional.Id }, professional);
         }
     }
