@@ -58,6 +58,20 @@ namespace Infrastructure.Data
                              VALUES (@Id, @PatientId, @ProfessionalId, @ScheduledAt)";
             await _connection.ExecuteAsync(sql, appointment);
         }
+
+        public async Task<IEnumerable<Appointment>> GetAllAsync()
+        {
+            var sql = @"
+            SELECT a.Id, a.ScheduledAt,
+                   p.FullName AS PatientName,
+                   pr.FullName AS ProfessionalName
+            FROM Appointments a
+            INNER JOIN Patients p ON p.Id = a.PatientId
+            INNER JOIN Professionals pr ON pr.Id = a.ProfessionalId
+            ORDER BY a.ScheduledAt DESC";
+
+            return await _connection.QueryAsync<Appointment>(sql);
+        }
     }
 
 }

@@ -69,6 +69,20 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+var corsPolicy = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicy,
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:4200") // frontend Angular
+                   .AllowAnyHeader()
+                   .AllowAnyMethod()
+                   .AllowCredentials();
+        });
+});
+
 // Add services
 builder.Services.AddScoped<PatientService>();
 builder.Services.AddScoped<ProfessionalService>();
@@ -97,6 +111,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
+app.UseCors(corsPolicy);
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

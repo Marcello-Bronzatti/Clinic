@@ -4,7 +4,7 @@ using Domain.Interfaces;
 
 namespace Application.Services
 {
-    public class AppointmentService
+    public class AppointmentService : IAppointmentRepository
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IPatientRepository _patientRepository;
@@ -54,6 +54,36 @@ namespace Application.Services
         public async Task<IEnumerable<Appointment>> GetAppointmentsByProfessionalAsync(Guid professionalId, DateTime date)
         {
             return await _appointmentRepository.GetByProfessionalIdAsync(professionalId, date);
+        }
+
+        public async Task<IEnumerable<Appointment>> GetAllAsync()
+        {
+            return await _appointmentRepository.GetAllAsync();
+        }
+
+        public async Task<Appointment> GetByIdAsync(Guid id)
+        {
+            return await _appointmentRepository.GetByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<Appointment>> GetByProfessionalIdAsync(Guid professionalId, DateTime date)
+        {
+            return await _appointmentRepository.GetByProfessionalIdAsync(professionalId, date);
+        }
+
+        public async Task<bool> HasConflictAsync(Guid professionalId, DateTime scheduledAt)
+        {
+            return await _appointmentRepository.HasConflictAsync(professionalId, scheduledAt);
+        }
+
+        public async Task<bool> HasPatientConflictAsync(Guid patientId, Guid professionalId, DateTime scheduledAt)
+        {
+            return await _appointmentRepository.HasPatientConflictAsync(patientId, professionalId, scheduledAt);
+        }
+
+        public async Task AddAsync(Appointment appointment)
+        {
+            await _appointmentRepository.AddAsync(appointment);
         }
     }
 }

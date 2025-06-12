@@ -9,6 +9,7 @@ namespace Application.Services
         Task<bool> HasConflictAsync(Guid professionalId, DateTime scheduledAt);
         Task<bool> HasPatientConflictAsync(Guid patientId, Guid professionalId, DateTime scheduledAt);
         Task AddAsync(Appointment appointment);
+        Task<IEnumerable<Appointment>> GetAllAsync();
     }
 
 }
