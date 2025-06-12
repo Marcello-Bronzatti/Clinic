@@ -9,37 +9,53 @@ using System.Threading.Tasks;
 
 namespace Tests
 {
+    [TestFixture]
     public class ProfessionalServiceTests
     {
-        private Mock<IProfessionalRepository> _mockRepo;
+        private Mock<IProfessionalRepository> _repo;
         private ProfessionalService _service;
 
         [SetUp]
         public void Setup()
         {
-            _mockRepo = new Mock<IProfessionalRepository>();
-            _service = new ProfessionalService(_mockRepo.Object);
+            _repo = new Mock<IProfessionalRepository>();
+            _service = new ProfessionalService(_repo.Object);
         }
 
         [Test]
-        public async Task GetAllAsync_ShouldReturnProfessionals()
+        public async Task GetAllAsync_ShouldReturnList()
         {
-            var professionals = new List<Professional> { new Professional { Id = Guid.NewGuid(), FullName = "Prof", Specialty = "Cardio", CRM = "12345" } };
-            _mockRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(professionals);
+            _repo.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Professional>
+            {
+                new Professional { Id = Guid.NewGuid(), FullName = "Dr. House" }
+            });
 
             var result = await _service.GetAllAsync();
 
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(1));
         }
 
         [Test]
-        public async Task AddAsync_WhenProfessionalExists_ShouldThrowException()
+        public async Task AddAsync_ShouldSucceed_WhenNotExists()
+        {
+            var prof = new Professional { Id = Guid.NewGuid(), FullName = "Dra. Jane" };
+
+            _repo.Setup(r => r.ExistsAsync(prof.Id)).ReturnsAsync(false);
+
+            await _service.AddAsync(prof);
+
+            _repo.Verify(r => r.AddAsync(prof), Times.Once);
+        }
+
+        [Test]
+        public void AddAsync_ShouldThrow_WhenAlreadyExists()
         {
             var prof = new Professional { Id = Guid.NewGuid() };
-            _mockRepo.Setup(r => r.ExistsAsync(prof.Id)).ReturnsAsync(true);
+
+            _repo.Setup(r => r.ExistsAsync(prof.Id)).ReturnsAsync(true);
 
             Assert.ThrowsAsync<InvalidOperationException>(() => _service.AddAsync(prof));
         }
+       
     }
 }

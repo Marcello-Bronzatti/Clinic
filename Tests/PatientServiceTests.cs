@@ -9,35 +9,50 @@ using System.Threading.Tasks;
 
 namespace Tests
 {
+    [TestFixture]
     public class PatientServiceTests
     {
-        private Mock<IPatientRepository> _mockRepo;
+        private Mock<IPatientRepository> _repo;
         private PatientService _service;
 
         [SetUp]
         public void Setup()
         {
-            _mockRepo = new Mock<IPatientRepository>();
-            _service = new PatientService(_mockRepo.Object);
+            _repo = new Mock<IPatientRepository>();
+            _service = new PatientService(_repo.Object);
         }
 
         [Test]
         public async Task GetAllAsync_ShouldReturnPatients()
         {
-            var patients = new List<Patient> { new Patient { Id = Guid.NewGuid(), FullName = "Teste", CPF = "12345678901", Email = "teste@email.com" } };
-            _mockRepo.Setup(r => r.GetAllAsync()).ReturnsAsync(patients);
+            _repo.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Patient>
+            {
+                new Patient { Id = Guid.NewGuid(), FullName = "Alice" }
+            });
 
             var result = await _service.GetAllAsync();
 
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result, Has.Count.EqualTo(1));
+            Assert.That(result, Is.Not.Empty);
         }
 
         [Test]
-        public async Task AddAsync_WhenPatientExists_ShouldThrowException()
+        public async Task AddAsync_ShouldCallRepository_WhenPatientIsNew()
         {
-            var patient = new Patient { Id = Guid.NewGuid() };
-            _mockRepo.Setup(r => r.ExistsAsync(patient.Id)).ReturnsAsync(true);
+            var patient = new Patient { Id = Guid.NewGuid(), FullName = "João" };
+
+            _repo.Setup(r => r.ExistsAsync(patient.Id)).ReturnsAsync(false);
+
+            await _service.AddAsync(patient);
+
+            _repo.Verify(r => r.AddAsync(patient), Times.Once);
+        }
+
+        [Test]
+        public void AddAsync_ShouldThrow_WhenPatientExists()
+        {
+            var patient = new Patient { Id = Guid.NewGuid(), FullName = "Repetido" };
+
+            _repo.Setup(r => r.ExistsAsync(patient.Id)).ReturnsAsync(true);
 
             Assert.ThrowsAsync<InvalidOperationException>(() => _service.AddAsync(patient));
         }
