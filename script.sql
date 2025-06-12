@@ -35,6 +35,24 @@ CREATE TABLE Users (
    INSERT INTO Users (Username, Password)
     VALUES ('admin', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=');
 
+-- Inserção de Pacientes
+INSERT INTO Patients (Id, FullName, CPF, Email) VALUES
+(NEWID(), 'Alice Costa', '12345678901', 'alice@teste.com'),
+(NEWID(), 'Bruno Lima', '23456789012', 'bruno@teste.com');
+
+-- Inserção de Profissionais
+INSERT INTO Professionals (Id, FullName, Specialty, CRM) VALUES
+(NEWID(), 'Dr. Pedro Martins', 'Cardiologia', 'CRM-SP-001'),
+(NEWID(), 'Dra. Fernanda Souza', 'Dermatologia', 'CRM-SP-002');
+
+-- Inserção de Agendamento (Exemplo válido)
+INSERT INTO Appointments (Id, PatientId, ProfessionalId, ScheduledAt)
+SELECT NEWID(), 
+       (SELECT TOP 1 Id FROM Patients WHERE FullName = 'Alice Costa'),
+       (SELECT TOP 1 Id FROM Professionals WHERE FullName = 'Dr. Pedro Martins'),
+       '2025-06-13T10:00:00';
+
+
 -- Índices
 CREATE INDEX idx_appointments_patient ON Appointments(PatientId, ProfessionalId, ScheduledAt);
 CREATE INDEX idx_appointments_professional ON Appointments(ProfessionalId, ScheduledAt);
