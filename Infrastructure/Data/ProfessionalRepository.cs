@@ -29,12 +29,11 @@ namespace Infrastructure.Data
         public async Task AddAsync(Professional professional)
         {
             const string sql = @"
-            INSERT INTO Professionals (Id, FullName, Specialty, CRM)
-            VALUES (@Id, @FullName, @Specialty, @CRM)";
+            INSERT INTO Professionals (FullName, Specialty, CRM)
+            VALUES (@FullName, @Specialty, @CRM)";
 
             await _connection.ExecuteAsync(sql, professional);
         }
-
 
         public async Task<bool> ExistsAsync(Guid professionalId)
         {
@@ -42,7 +41,13 @@ namespace Infrastructure.Data
             var result = await _connection.ExecuteScalarAsync<int?>(sql, new { Id = professionalId });
             return result.HasValue;
         }
-    }
 
+        public async Task DeleteAsync(Guid id)
+        {
+            const string sql = "DELETE FROM Professionals WHERE Id = @Id";
+            await _connection.ExecuteAsync(sql, new { Id = id });
+        }
+
+    }
 
 }

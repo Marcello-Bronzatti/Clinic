@@ -25,10 +25,11 @@ namespace Clinic.API.Controllers
 
             var result = appointments.Select(a => new
             {
-                a.Id,
+                Id = a.Id,
                 a.ScheduledAt,
                 a.PatientName,
-                a.ProfessionalName
+                a.ProfessionalName,
+                a.ProfessionalId
             });
 
             return Ok(result);
@@ -46,6 +47,10 @@ namespace Clinic.API.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
         [HttpPost("check-availability")]
@@ -56,10 +61,37 @@ namespace Clinic.API.Controllers
         }
 
         [HttpGet("professional/{professionalId}")]
-        public async Task<IActionResult> GetByProfessional(Guid professionalId, [FromQuery] DateTime date)
+        public async Task<IActionResult> GetByProfessional(Guid professionalId)
         {
-            var appointments = await _appointmentService.GetAppointmentsByProfessionalAsync(professionalId, date);
+            var appointments = await _appointmentService.GetAppointmentsByProfessionalAsync(professionalId);
             return Ok(appointments);
         }
+
+        [HttpGet("available-times")]
+        public async Task<IActionResult> GetAvailableTimes([FromQuery] Guid professionalId, [FromQuery] DateTime date)
+        {
+            var times = await _appointmentService.GetAvailableTimesAsync(professionalId, date);
+            return Ok(times);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Cancel(Guid id)
+        {
+            try
+            {
+                await _appointmentService.CancelAsync(id);
+                return NoContent();
+
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
     }
 }

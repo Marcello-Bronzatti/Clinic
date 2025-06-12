@@ -5,6 +5,6 @@
         public Guid Id { get; set; }
         public string FullName { get; set; }
         public string Specialty { get; set; }
-        public string CRM { get; set; }  // Novo campo
+        public string CRM { get; set; }  
     }
 }

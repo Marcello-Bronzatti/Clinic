@@ -4,7 +4,7 @@ using Domain.Interfaces;
 
 namespace Application.Services
 {
-    public class AppointmentService 
+    public class AppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IPatientRepository _patientRepository;
@@ -28,11 +28,17 @@ namespace Application.Services
             if (!await _patientRepository.ExistsAsync(dto.PatientId))
                 throw new ArgumentException("Paciente não encontrado.");
 
+            // Profissional não pode ter outro agendamento nesse horário
             var hasProfessionalConflict = await _appointmentRepository.HasConflictAsync(dto.ProfessionalId, dto.ScheduledAt);
-            if (hasProfessionalConflict) return false;
+            if (hasProfessionalConflict)
+                return false;
 
+            // Paciente não pode ter outro agendamento com o mesmo profissional no mesmo dia
             var hasPatientConflict = await _appointmentRepository.HasPatientConflictAsync(dto.PatientId, dto.ProfessionalId, dto.ScheduledAt);
-            return !hasPatientConflict;
+            if (hasPatientConflict)
+                return false;
+
+            return true;
         }
 
         public async Task ScheduleAsync(CreateAppointmentDTO dto)
@@ -51,9 +57,9 @@ namespace Application.Services
             await _appointmentRepository.AddAsync(appointment);
         }
 
-        public async Task<IEnumerable<Appointment>> GetAppointmentsByProfessionalAsync(Guid professionalId, DateTime date)
+        public async Task<IEnumerable<Appointment>> GetAppointmentsByProfessionalAsync(Guid professionalId)
         {
-            return await _appointmentRepository.GetByProfessionalIdAsync(professionalId, date);
+            return await _appointmentRepository.GetAppointmentsByProfessionalAsync(professionalId);
         }
 
         public async Task<IEnumerable<Appointment>> GetAllAsync()
@@ -61,29 +67,44 @@ namespace Application.Services
             return await _appointmentRepository.GetAllAsync();
         }
 
-        public async Task<Appointment> GetByIdAsync(Guid id)
-        {
-            return await _appointmentRepository.GetByIdAsync(id);
-        }
-
         public async Task<IEnumerable<Appointment>> GetByProfessionalIdAsync(Guid professionalId, DateTime date)
         {
             return await _appointmentRepository.GetByProfessionalIdAsync(professionalId, date);
         }
 
-        public async Task<bool> HasConflictAsync(Guid professionalId, DateTime scheduledAt)
+        public async Task<IEnumerable<string>> GetAvailableTimesAsync(Guid professionalId, DateTime date)
         {
-            return await _appointmentRepository.HasConflictAsync(professionalId, scheduledAt);
+            var allSlots = GenerateTimeSlots(); // Gera horários padrão: 08:00, 08:30, ..., 17:30
+            var booked = await _appointmentRepository.GetByProfessionalIdAsync(professionalId, date);
+
+            var bookedTimes = booked.Select(a => a.ScheduledAt.ToString("HH:mm")).ToHashSet();
+            return allSlots.Where(t => !bookedTimes.Contains(t));
         }
 
-        public async Task<bool> HasPatientConflictAsync(Guid patientId, Guid professionalId, DateTime scheduledAt)
+        private List<string> GenerateTimeSlots()
         {
-            return await _appointmentRepository.HasPatientConflictAsync(patientId, professionalId, scheduledAt);
+            var slots = new List<string>();
+            var start = new TimeSpan(8, 0, 0);
+            var end = new TimeSpan(17, 30, 0);
+            var interval = new TimeSpan(0, 30, 0);
+
+            for (var time = start; time <= end; time += interval)
+            {
+                slots.Add(time.ToString(@"hh\:mm"));
+            }
+
+            return slots;
         }
 
-        public async Task AddAsync(Appointment appointment)
+        public async Task CancelAsync(Guid id)
         {
-            await _appointmentRepository.AddAsync(appointment);
+            var appointment = await _appointmentRepository.GetByIdAsync(id);
+            if (appointment == null)
+                throw new ArgumentException("Consulta não encontrada.");
+
+            await _appointmentRepository.DeleteAsync(id);
         }
+
+
     }
 }

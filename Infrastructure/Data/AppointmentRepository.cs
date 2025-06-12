@@ -26,6 +26,7 @@ namespace Infrastructure.Data
             SELECT * FROM Appointments 
             WHERE ProfessionalId = @ProfessionalId 
               AND CAST(ScheduledAt AS DATE) = @Date";
+
             return await _connection.QueryAsync<Appointment>(sql, new { ProfessionalId = professionalId, Date = date.Date });
         }
 
@@ -41,16 +42,21 @@ namespace Infrastructure.Data
         public async Task<bool> HasPatientConflictAsync(Guid patientId, Guid professionalId, DateTime scheduledAt)
         {
             const string sql = @"
-            SELECT 1 FROM Appointments 
-            WHERE PatientId = @PatientId AND ProfessionalId = @ProfessionalId AND CAST(ScheduledAt AS DATE) = @Date";
+                SELECT 1 FROM Appointments 
+                WHERE PatientId = @PatientId 
+                AND ProfessionalId = @ProfessionalId 
+                AND CAST(ScheduledAt AS DATE) = @Date";
+
             var result = await _connection.ExecuteScalarAsync<int?>(sql, new
             {
                 PatientId = patientId,
                 ProfessionalId = professionalId,
                 Date = scheduledAt.Date
             });
+
             return result.HasValue;
         }
+
 
         public async Task AddAsync(Appointment appointment)
         {
@@ -62,9 +68,9 @@ namespace Infrastructure.Data
         public async Task<IEnumerable<Appointment>> GetAllAsync()
         {
             var sql = @"
-            SELECT a.Id, a.ScheduledAt,
+            SELECT a.Id as Id, a.ScheduledAt,
                    p.FullName AS PatientName,
-                   p.Id,
+                   p.Id as PatientId,
                    pr.FullName AS ProfessionalName,
                    pr.id as ProfessionalId
             FROM Appointments a
@@ -73,6 +79,28 @@ namespace Infrastructure.Data
             ORDER BY a.ScheduledAt DESC";
 
             return await _connection.QueryAsync<Appointment>(sql);
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            const string sql = "DELETE FROM Appointments WHERE Id = @Id";
+            await _connection.ExecuteAsync(sql, new { Id = id });
+        }
+
+        public async Task<IEnumerable<Appointment>> GetAppointmentsByProfessionalAsync(Guid professionalId)
+        {
+            const string sql = @"
+            SELECT a.Id, a.ScheduledAt,
+              p.FullName AS PatientName,
+              p.Id,
+              pr.FullName AS ProfessionalName,
+              pr.id as ProfessionalId
+           FROM Appointments a
+           INNER JOIN Patients p ON p.Id = a.PatientId
+           INNER JOIN Professionals pr ON pr.Id = a.ProfessionalId
+           WHERE pr.Id = @professionalId";
+
+            return await _connection.QueryAsync<Appointment>(sql, new { ProfessionalId = professionalId });
         }
     }
 

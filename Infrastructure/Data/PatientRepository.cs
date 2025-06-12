@@ -43,5 +43,23 @@ namespace Infrastructure.Data
             const string sql = "DELETE FROM Patients WHERE Id = @Id";
             await _connection.ExecuteAsync(sql, new { Id = id });
         }
+
+        public async Task<bool> HasPatientConflictAsync(Guid patientId, Guid professionalId, DateTime scheduledAt)
+        {
+            const string sql = @"
+        SELECT 1 FROM Appointments 
+        WHERE PatientId = @PatientId 
+          AND ProfessionalId = @ProfessionalId 
+          AND CAST(ScheduledAt AS DATE) = @Date";
+
+            var result = await _connection.ExecuteScalarAsync<int?>(sql, new
+            {
+                PatientId = patientId,
+                ProfessionalId = professionalId,
+                Date = scheduledAt.Date
+            });
+
+            return result.HasValue;
+        }
     }
 }

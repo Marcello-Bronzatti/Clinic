@@ -9,5 +9,6 @@ namespace Domain.Interfaces
         Task AddAsync(Patient patient);
         Task<bool> ExistsAsync(Guid patientId);
         Task DeleteAsync(Guid id);
+        Task<bool> HasPatientConflictAsync(Guid patientId, Guid professionalId, DateTime scheduledAt);
     }
 }

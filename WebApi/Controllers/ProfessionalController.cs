@@ -37,5 +37,14 @@ namespace Presentation.Controllers
             await _professionalService.AddAsync(professional);
             return CreatedAtAction(nameof(GetById), new { id = professional.Id }, professional);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _professionalService.DeleteAsync(id);
+            return NoContent();
+        }
+
+
     }
 }

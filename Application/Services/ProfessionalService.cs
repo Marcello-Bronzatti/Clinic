@@ -25,5 +25,14 @@ namespace Application.Services
 
             await _repository.AddAsync(professional);
         }
+        public async Task DeleteAsync(Guid id)
+        {
+            var professional = await _repository.GetByIdAsync(id);
+            if (professional == null)
+                throw new InvalidOperationException("Profissional não encontrado.");
+
+            await _repository.DeleteAsync(id);
+        }
+
     }
 }
