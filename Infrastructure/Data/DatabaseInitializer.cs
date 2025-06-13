@@ -33,8 +33,7 @@ namespace Infrastructure.Data
             var password = "admin";
             var hash = HashPassword(password);
 
-            var insertCmd = new SqlCommand("INSERT INTO Users (Id, Username, Password) VALUES (@Id, @Username, @Password)", connection);
-            insertCmd.Parameters.AddWithValue("@Id", Guid.NewGuid());
+            var insertCmd = new SqlCommand("INSERT INTO Users (Username, Password) VALUES (@Username, @Password)", connection);
             insertCmd.Parameters.AddWithValue("@Username", "admin");
             insertCmd.Parameters.AddWithValue("@Password", hash);
 
@@ -51,8 +50,8 @@ namespace Infrastructure.Data
             connection.Execute(@"
                 IF NOT EXISTS (SELECT 1 FROM Patients)
                 BEGIN
-                    INSERT INTO Patients (Id, FullName, CPF, Email)
-                    VALUES (@Id, 'João da Silva', '12345678901', 'joao@email.com')
+                    INSERT INTO Patients (FullName, CPF, Email)
+                    VALUES ('João da Silva', '12345678901', 'joao@email.com')
                 END", new { Id = patientId });
 
             // SEED: Profissionais
@@ -60,8 +59,8 @@ namespace Infrastructure.Data
             connection.Execute(@"
                 IF NOT EXISTS (SELECT 1 FROM Professionals)
                 BEGIN
-                    INSERT INTO Professionals (Id, FullName, Specialty, CRM)
-                    VALUES (@Id, 'Dra. Ana Paula', 'Cardiologista', 'CRM12345')
+                    INSERT INTO Professionals (FullName, Specialty, CRM)
+                    VALUES ('Dra. Ana Paula', 'Cardiologista', 'CRM12345')
                 END", new { Id = professionalId });
 
             // SEED: Agendamento
@@ -69,8 +68,8 @@ namespace Infrastructure.Data
             connection.Execute(@"
                 IF NOT EXISTS (SELECT 1 FROM Appointments)
                 BEGIN
-                    INSERT INTO Appointments (Id, PatientId, ProfessionalId, ScheduledAt)
-                    VALUES (@Id, @PatientId, @ProfessionalId, @ScheduledAt)
+                    INSERT INTO Appointments (PatientId, ProfessionalId, ScheduledAt)
+                    VALUES (@PatientId, @ProfessionalId, @ScheduledAt)
                 END", new
             {
                 Id = appointmentId,

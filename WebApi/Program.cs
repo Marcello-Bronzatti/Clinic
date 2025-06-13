@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
 using Infrastructure.Data;
@@ -89,6 +90,7 @@ builder.Services.AddScoped<ProfessionalService>();
 builder.Services.AddScoped<AppointmentService>();
 builder.Services.AddScoped<AuthService>();
 
+
 // Add repositories
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IProfessionalRepository, ProfessionalRepository>();
@@ -110,8 +112,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
 
 app.UseCors(corsPolicy);
 app.UseHttpsRedirection();
