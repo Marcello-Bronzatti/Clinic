@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Application.Services
+namespace Domain.Interfaces
 {
     public interface IAppointmentRepository
     {
