@@ -41,14 +41,12 @@ cd clinic-api
 
 ### 2. Configurar o banco de dados
 
-Utilize o `docs/script.sql` para criar o banco de dados no SQL Server. Também existe um script opcional com dados de teste:
+Utilize o `docs/script.sql` para criar o banco de dados no SQL Server.
 
 ```sql
 -- Script principal
 docs/script.sql
 
--- Dados de teste (seed)
-docs/seed-test-data.sql
 ```
 
 ### 3. Ajustar `appsettings.json`
