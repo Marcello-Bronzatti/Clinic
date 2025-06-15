@@ -32,48 +32,49 @@ API RESTful para gerenciamento de agendamentos de consultas em uma clínica. Des
 
 ## 🚀 Como executar
 
-### 1. Clonar repositório
+## 🚀 Como executar via Docker
+
+ 1. Pré-requisitos
+
+- Docker Desktop instalado e em execução
+- .NET SDK (apenas se quiser rodar testes)
+
+---
+
+ 2. Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/clinic-api.git
+git clone https://github.com/marcello-bronzatti/clinic-api.git
 cd clinic-api
-```
-
-### 2. Configurar o banco de dados
-
-Utilize o `docs/script.sql` para criar o banco de dados no SQL Server. Também existe um script opcional com dados de teste:
-
-```sql
--- Script principal
-docs/script.sql
-
--- Dados de teste (seed)
-docs/seed-test-data.sql
-```
 
 ### 3. Ajustar `appsettings.json`
 
 ```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=localhost;Database=ClinicDb;Trusted_Connection=True;"
-},
-"Jwt": {
-  "Key": "sua-chave-super-secreta",
-  "Issuer": "ClinicAPI"
-}
-```
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=sqlserver;Database=ClinicDb;User=sa;Password=Clin1c@2024;TrustServerCertificate=True;"
+  },
 
-### 4. Rodar a aplicação
 
-```bash
-dotnet build
-dotnet run
+  "Jwt": {
+    "Key": "MyUltraSecureSuperStrongJwtKey_1234567890!",
+    "Issuer": "ClinicAuth",
+    "Audience": "ClinicUsers"
+  }
 ```
+3. Subir os containers (API + SQL Server)
 
-Acesse via:
-```
-https://localhost:5001/swagger
-```
+docker-compose up --build
+
+Aguarde o build e a inicialização. Isso criará:
+
+    sqlserver na porta 1433
+
+    api na porta 5000
+4. Acessar a API
+
+Abra no navegador:
+
+http://localhost:5000/swagger
 
 ---
 
