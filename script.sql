@@ -1,4 +1,12 @@
+-- Verifica se existe e cria o banco
+IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'ClinicDb')
+BEGIN
+    CREATE DATABASE ClinicDb;
+END
+GO
 
+USE ClinicDb;
+GO
 -- Pacientes
 CREATE TABLE Patients (
     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),

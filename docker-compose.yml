@@ -1,3 +1,4 @@
+
 version: "3.9"
 
 services:
@@ -20,6 +21,20 @@ services:
       interval: 10s
       retries: 10
       start_period: 30s
+
+  db-init:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    volumes:
+      - ./script.sql:/script.sql
+    entrypoint: >
+      /bin/bash -c "
+        echo 'Aguardando SQL Server...';
+        sleep 20;
+        /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Clin1c@2024 -d master -i /script.sql;
+        echo 'Script executado com sucesso!'"
 
   api:
     build:
