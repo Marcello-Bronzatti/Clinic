@@ -1,3 +1,4 @@
+
 -- Pacientes
 CREATE TABLE Patients (
     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
@@ -24,28 +25,28 @@ CREATE TABLE Appointments (
     FOREIGN KEY (ProfessionalId) REFERENCES Professionals(Id)
 );
 
--- Usuários
+-- Usuï¿½rios
 CREATE TABLE Users (
     Id UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     Username NVARCHAR(100) NOT NULL UNIQUE,
     Password NVARCHAR(200) NOT NULL
 );
 
--- Usuário para testes // admin, senha: admin
+-- Usuï¿½rio para testes // admin, senha: admin
    INSERT INTO Users (Username, Password)
     VALUES ('admin', 'jGl25bVBBBW96Qi9Te4V37Fnqchz/Eu4qB9vKrRIqRg=');
 
--- Inserção de Pacientes
+-- Inserï¿½ï¿½o de Pacientes
 INSERT INTO Patients (Id, FullName, CPF, Email) VALUES
 (NEWID(), 'Alice Costa', '12345678901', 'alice@teste.com'),
 (NEWID(), 'Bruno Lima', '23456789012', 'bruno@teste.com');
 
--- Inserção de Profissionais
+-- Inserï¿½ï¿½o de Profissionais
 INSERT INTO Professionals (Id, FullName, Specialty, CRM) VALUES
 (NEWID(), 'Dr. Pedro Martins', 'Cardiologia', 'CRM-SP-001'),
 (NEWID(), 'Dra. Fernanda Souza', 'Dermatologia', 'CRM-SP-002');
 
--- Inserção de Agendamento (Exemplo válido)
+-- Inserï¿½ï¿½o de Agendamento (Exemplo vï¿½lido)
 INSERT INTO Appointments (Id, PatientId, ProfessionalId, ScheduledAt)
 SELECT NEWID(), 
        (SELECT TOP 1 Id FROM Patients WHERE FullName = 'Alice Costa'),
@@ -53,6 +54,6 @@ SELECT NEWID(),
        '2025-06-13T10:00:00';
 
 
--- Índices
+-- ï¿½ndices
 CREATE INDEX idx_appointments_patient ON Appointments(PatientId, ProfessionalId, ScheduledAt);
 CREATE INDEX idx_appointments_professional ON Appointments(ProfessionalId, ScheduledAt);

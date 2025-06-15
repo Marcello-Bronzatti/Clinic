@@ -12,22 +12,14 @@ services:
     volumes:
       - sql_data:/var/opt/mssql
     healthcheck:
-  test:
-    [
-      "CMD",
-      "/opt/mssql-tools/bin/sqlcmd",
-      "-S",
-      "localhost",
-      "-U",
-      "sa",
-      "-P",
-      "Clin1c@2024",
-      "-Q",
-      "SELECT 1",
-    ]
-  interval: 10s
-  retries: 10
-  start_period: 30s
+      test:
+        [
+          "CMD-SHELL",
+          "echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Clin1c@2024",
+        ]
+      interval: 10s
+      retries: 10
+      start_period: 30s
 
   api:
     build:
@@ -36,7 +28,7 @@ services:
     container_name: clinic-api
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=ClinicDb;User=sa;Password=Clin1c@2024;"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver;Database=ClinicDb;User=sa;Password=Clin1c@2024;Encrypt=False;TrustServerCertificate=True;"
     ports:
       - "5000:80"
     depends_on:
