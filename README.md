@@ -1,6 +1,7 @@
+
 # Clinic API 🩺
 
-API RESTful para gerenciamento de agendamentos de consultas em uma clínica. Desenvolvida em ASP.NET Core 7, com arquitetura DDD, Dapper e autenticação JWT.
+API RESTful para gerenciamento de agendamentos de consultas em uma clínica. Desenvolvida em .NET 7, com arquitetura DDD, Dapper e autenticação JWT.
 
 ---
 
@@ -9,10 +10,10 @@ API RESTful para gerenciamento de agendamentos de consultas em uma clínica. Des
 - .NET 7
 - ASP.NET Core
 - Dapper
-- SQL Server (compatível com PostgreSQL / MySQL)
+- SQL Server 
 - JWT Authentication
 - Swagger
-- nUnit (testes unitários)
+- NUnit (testes unitários)
 
 ---
 
@@ -23,58 +24,55 @@ API RESTful para gerenciamento de agendamentos de consultas em uma clínica. Des
 ├── Domain/
 ├── Application/
 ├── Infrastructure/
-├── API/
+├── WebApi/
 ├── Tests/
-└── docs/
+├── script.sql
+└── docker-compose.yml
 ```
 
 ---
 
-## 🚀 Como executar
+## 🚀 Como executar localmente
 
-## 🚀 Como executar via Docker
+### 1. Pré-requisitos
 
- 1. Pré-requisitos
-
-- Docker Desktop instalado e em execução
-- .NET SDK (apenas se quiser rodar testes)
+- [.NET SDK 7.0](https://dotnet.microsoft.com/en-us/download) instalado (apenas se quiser rodar os testes)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e em execução
 
 ---
 
- 2. Clonar o repositório
+### 2. Clonar o repositório
 
 ```bash
 git clone https://github.com/marcello-bronzatti/clinic-api.git
 cd clinic-api
-
-### 3. Ajustar `appsettings.json`
-
-```json
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=sqlserver;Database=ClinicDb;User=sa;Password=Clin1c@2024;TrustServerCertificate=True;"
-  },
-
-
-  "Jwt": {
-    "Key": "MyUltraSecureSuperStrongJwtKey_1234567890!",
-    "Issuer": "ClinicAuth",
-    "Audience": "ClinicUsers"
-  }
 ```
-3. Subir os containers (API + SQL Server)
 
+---
+
+### 3. Executar com Docker
+
+Comando único:
+
+```bash
 docker-compose up --build
+```
 
-Aguarde o build e a inicialização. Isso criará:
+Esse comando irá:
 
-    sqlserver na porta 1433
+- Subir o container do **SQL Server**
+- Executar automaticamente o `script.sql` via serviço `db-init`
+- Subir a API na porta `5000`
 
-    api na porta 5000
-4. Acessar a API
+---
 
-Abra no navegador:
+### 4. Acessar a API
 
+Abra o navegador e acesse:
+
+```
 http://localhost:5000/swagger
+```
 
 ---
 
@@ -89,13 +87,14 @@ Senha: admin
 
 ## ✅ Testes Automatizados
 
-Para executar os testes:
+Para rodar os testes (fora do Docker):
 
 ```bash
 dotnet test
 ```
 
 Testes implementados para:
+
 - AppointmentService
 - PatientService
 - ProfessionalService
@@ -113,6 +112,29 @@ Testes implementados para:
 
 ---
 
+## 🐳 Docker & Docker Compose
+
+### Arquitetura:
+
+```
+[Docker Compose]
+│
+├── clinic-api (porta 5000)
+│   └── .NET 7 Web API
+│
+├── sqlserver (porta 1433)
+│   └── Banco de dados SQL Server
+│
+└── db-init
+    └── Executa script.sql automaticamente para criar e popular o banco
+```
+
+Os volumes e redes são definidos no `docker-compose.yml`.
+
+---
+
 ## 📄 Autor
 
 Desenvolvido por **Marcello Bronzatti**
+
+[GitHub](https://github.com/marcello-bronzatti)
