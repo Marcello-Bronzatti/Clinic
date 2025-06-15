@@ -1,10 +1,11 @@
 ﻿using Application.DTOs;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 
 namespace Application.Services
 {
-    public class AppointmentService
+    public class AppointmentService:IAppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IPatientRepository _patientRepository;
@@ -104,7 +105,5 @@ namespace Application.Services
 
             await _appointmentRepository.DeleteAsync(id);
         }
-
-
     }
 }

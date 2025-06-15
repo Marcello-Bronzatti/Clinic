@@ -1,7 +1,7 @@
 ﻿using Application.DTOs;
-using Application.Services;
-using Microsoft.AspNetCore.Mvc;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Clinic.API.Controllers
 {
@@ -11,9 +11,9 @@ namespace Clinic.API.Controllers
     [Route("api/[controller]")]
     public class AppointmentController : ControllerBase
     {
-        private readonly AppointmentService _appointmentService;
+        private readonly IAppointmentService _appointmentService;
 
-        public AppointmentController(AppointmentService appointmentService)
+        public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
         }

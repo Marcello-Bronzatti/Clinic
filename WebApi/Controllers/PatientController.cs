@@ -1,4 +1,4 @@
-﻿using Application.Services;
+﻿using Application.Interfaces;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +10,9 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class PatientController : ControllerBase
     {
-        private readonly PatientService _patientService;
+        private readonly IPatientService _patientService;
 
-        public PatientController(PatientService service)
+        public PatientController(IPatientService service)
         {
             _patientService = service;
         }

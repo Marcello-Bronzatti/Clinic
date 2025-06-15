@@ -85,10 +85,10 @@ builder.Services.AddCors(options =>
 });
 
 // Add services
-builder.Services.AddScoped<PatientService>();
-builder.Services.AddScoped<ProfessionalService>();
-builder.Services.AddScoped<AppointmentService>();
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped<IProfessionalService, ProfessionalService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 // Add repositories

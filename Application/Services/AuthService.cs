@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿// Application/Services/AuthService.cs
+using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -6,10 +7,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Application.Interfaces;
 
 namespace Application.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
@@ -32,12 +34,10 @@ namespace Application.Services
 
         public async Task RegisterAsync(string username, string password)
         {
-            // Verifica se o usuário já existe
             var existingUser = await _userRepository.GetByUsernameAsync(username);
             if (existingUser != null)
                 throw new InvalidOperationException("Username already exists.");
 
-            // Hasheia a senha antes de salvar
             var hashedPassword = HashPassword(password);
 
             var user = new User

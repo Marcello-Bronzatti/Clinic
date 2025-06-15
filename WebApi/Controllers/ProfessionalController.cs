@@ -1,4 +1,4 @@
-﻿using Application.Services;
+﻿using Application.Interfaces;
 using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +10,9 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class ProfessionalController : ControllerBase
     {
-        private readonly ProfessionalService _professionalService;
+        private readonly IProfessionalService _professionalService;
 
-        public ProfessionalController(ProfessionalService service)
+        public ProfessionalController(IProfessionalService service)
         {
             _professionalService = service;
         }
@@ -44,7 +44,6 @@ namespace Presentation.Controllers
             await _professionalService.DeleteAsync(id);
             return NoContent();
         }
-
 
     }
 }
